@@ -1,0 +1,14 @@
+{
+  "paper_commit": "8475d3d9564d60467fe1b23bd182ac4047f032d8",
+  "sha256": {
+    "band-chunk-first.png": "7b40e564aaf9ddb72954b3dfe099eb59031f143d563d94d1c5270c38e3941889",
+    "band-chunk-last.png": "04f0b57f0d3c78f17c5f5b6eb07cb907b48fda788a8d0bf6f0dfafc84b4aa2ff",
+    "band-chunk-mid.png": "3ff7a4858cbdea6df588f40fa00f69132326705816ba05fd9d46a73757b6fa4f",
+    "band-full.png": "56fdfb076c4584f3abd66b812577862188dd88aba0aa0ccdfdded5b96b4e01f8",
+    "fig-halfsill.svg": "829ab4ceb3930d64b592e92d4b03e947ce4816362e456504cf77effffcd7abba",
+    "fig-hero-gap-ladder.svg": "bf898db9360ec11539688e2e8cb1da86fb3fc3e0331cf889016e96ea41d411da",
+    "fig-hero-storage.svg": "8e7a384fe2392ebb2863ddaefb0def7d22029a23c37f941ce5be9465c81774b9",
+    "fig-method.svg": "2b2609319197abb9788c8398a00c850018a8f28c7cfde79998374a91489280f5",
+    "fig-width-curves.svg": "247388948af953aeae3570db399bf9270498f076d866971abb62784039539c79"
+  }
+}

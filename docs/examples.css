@@ -1,0 +1,29 @@
+/* Static Python highlighting keeps the examples readable without JavaScript. */
+.code-example { margin-top: 28px; }
+.code-example h3 { margin: 0 0 6px; font-size: 1.1rem; font-weight: 600; }
+.code-example p { margin-bottom: 12px; font-size: 0.94rem; }
+.code-example pre {
+  max-width: 100%;
+  overflow-x: auto;
+  margin: 0;
+  padding: 20px;
+  border: 1px solid var(--dark-rule);
+  border-radius: 3px;
+  background: var(--dark-2);
+  color: var(--dark-text);
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  line-height: 1.75;
+  tab-size: 4;
+}
+.code-example pre code { font-size: inherit; }
+.code-example .c1 { color: #bcb3a7; }
+.code-example .k, .code-example .kn, .code-example .kc { color: #ff967f; }
+.code-example .s2 { color: #badbaf; }
+.code-example .nb, .code-example .mi, .code-example .mf { color: #e9c78b; }
+.code-example .nn { color: #bec5ff; }
+.code-example .o, .code-example .p { color: #d5cabc; }
+.code-example .code-note { margin: 10px 0 0; color: var(--muted); font-size: 0.82rem; }
+@media (max-width: 640px) {
+  .code-example pre { padding: 16px; }
+}
