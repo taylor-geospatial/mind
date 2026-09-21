@@ -24,6 +24,7 @@ dependencies = [
   "faissknn[cuda]>=0.4.2; sys_platform=='linux' and platform_machine=='x86_64'",
   "geoclip>=1.2",
   "geopandas",
+  "h3>=4.5,<5",
   "huggingface-hub",
   "joblib",
   "matplotlib>=3.10.9",

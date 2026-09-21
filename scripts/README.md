@@ -77,6 +77,10 @@ Give each run a distinct `source` in its input manifest.
 
 ## Spatial analyses
 
+The [local hex explorer](hex_lab/README.md) provides PCA colors, distant embedding matches,
+and neighboring-cell contrast with optional 3D columns. Its cache builder accepts any
+number of `emb_*` columns and selected dimension ranges.
+
 ```bash
 uv run python -m scripts.paper.distance_error --out results/distance-error.csv
 uv run python -m scripts.paper.variogram \

@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#1a1612">
+  <title>MIND · Hex lab</title>
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500&family=Manrope:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@6.10.0/dist/maplibre-gl.css">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <main id="map" aria-label="Interactive map of MIND global hex embeddings"></main>
+  <header class="brand">
+    <span class="eyebrow">LOCAL EXPLORATION</span>
+    <h1>MIND <span>Hex lab</span></h1>
+  </header>
+  <section class="explorer panel" aria-label="Explore embeddings">
+    <div class="view-tabs" aria-label="Visualization">
+      <button data-mode="pca" aria-pressed="true">Color atlas</button>
+      <button data-mode="similarity" aria-pressed="false">Similarity</button>
+      <button data-mode="contrast" aria-pressed="false">Contrast</button>
+    </div>
+    <div class="panel-body">
+      <div class="section-number" id="view-number">01 / COLOR ATLAS</div>
+      <div class="fine" id="dataset-label"></div>
+      <h2 id="view-title">A world of structure.</h2>
+      <p id="view-description">Three PCA components become red, green and blue. Follow the broad patterns, then zoom into individual hexes.</p>
+      <div id="similarity-controls" hidden>
+        <label class="distance-control">Search beyond <select id="distance"><option value="1000">1,000 km</option><option value="3000" selected>3,000 km</option><option value="6000">6,000 km</option></select></label>
+        <div class="query-summary" id="query-summary" aria-live="polite">Choose a place below, or click a hex.</div>
+        <div id="matches" class="matches" aria-label="Distant matches"></div>
+        <p class="fine" id="match-note" hidden>Best cosine matches beyond the selected distance, with 500 km between results. Similar embeddings can have different causes.</p>
+      </div>
+      <div id="contrast-controls" hidden>
+        <label class="toggle"><input id="relief" type="checkbox"><span>Raise contrast into 3D columns</span></label>
+        <p class="fine">Column height encodes embedding change, not terrain elevation.</p>
+      </div>
+      <div class="places-label">START SOMEWHERE</div>
+      <div class="places">
+        <button data-place="amazon">Amazon</button>
+        <button data-place="sahara">Sahara</button>
+        <button data-place="himalaya">Himalaya</button>
+        <button data-place="cornbelt">Corn Belt</button>
+      </div>
+      <details>
+        <summary>What am I looking at?</summary>
+        <p id="dataset-description"></p>
+        <p>At low zoom, resolution-3/4 cells show count-weighted overviews. Zoom in for the original resolution-5 cells. Empty areas have no cells in this file.</p>
+        <p>PCA uses a fixed 2nd–98th percentile stretch per channel. Contrast is the mean cosine distance to available neighboring resolution-5 cells, then averaged in overviews.</p>
+        <p>Similarity compares L2-normalized vectors. Distant matches always use the source resolution-5 cells. Gray contrast cells have no available neighbors.</p>
+      </details>
+    </div>
+  </section>
+  <nav class="map-actions panel" aria-label="Map controls">
+    <button id="world">World view</button>
+    <button id="projection" aria-pressed="true">Globe</button>
+  </nav>
+  <div class="map-footer">
+    <section class="legend panel" aria-label="Map color legend">
+      <div id="legend-title">PCA → RGB</div>
+      <div id="legend-bar" class="legend-bar pca"></div>
+      <div id="legend-labels" class="legend-labels"><span>PC1 → R</span><span>PC2 → G</span><span>PC3 → B</span></div>
+      <div id="legend-note" class="fine">Same color stretch at every zoom.</div>
+    </section>
+    <div id="status" class="status" role="status">Loading the atlas…</div>
+  </div>
+  <div id="notice" class="notice panel" role="alert" hidden></div>
+  <div id="hover" class="hover panel" role="tooltip" hidden></div>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>
