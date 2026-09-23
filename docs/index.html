@@ -1,0 +1,472 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MIND the Gap: A Geographic INR with Adjustable Spatial Scale | Taylor Geospatial</title>
+    <meta
+      name="description"
+      content="MIND (Matryoshka Implicit Neural Distillation) is a geographic implicit neural representation that distills four Earth embeddings into one nested 3072-d embedding whose spatial granularity is adjusted when fitting a downstream predictor. CoordBench evaluates 52 datasets and 78 targets under random folds and held-out regions."
+    />
+    <meta property="og:title" content="MIND the Gap: A Geographic INR with Adjustable Spatial Scale" />
+    <meta
+      property="og:description"
+      content="A coordinate-only neural field whose leading chunks capture broad geographic variation and whose later chunks add finer spatial granularity. Released as a dimension-chunked global 0.01° Zarr store."
+    />
+    <meta property="og:image" content="assets/fig-hero-storage.svg?v=377c226" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..600;1,8..60,400..600&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="style.css?v=20260923-3" />
+    <link rel="stylesheet" href="globe.css?v=20260922-1" />
+    <link rel="stylesheet" href="examples.css?v=20260921-1" />
+  </head>
+  <body>
+    <a class="skip-link" href="#paper">Skip to overview</a>
+    <!-- ===== header ===== -->
+    <header class="hero">
+      <div class="hero-heading">
+        <a class="research-home" href="https://taylorgeospatial.org/innovation-program/" aria-label="Taylor Geospatial Innovation Program">
+          <img class="research-logo" src="assets/taylor-geospatial-oneline.svg" width="753" height="81" alt="Taylor Geospatial" />
+        </a>
+        <h1><span class="it">MIND</span> the Gap</h1>
+      </div>
+      <div class="page">
+        <p class="subtitle">
+          A Geographic Implicit Neural Representation <span class="title-tail">with Adjustable Spatial Scale</span>
+        </p>
+        <ul class="authors" aria-label="Authors and affiliations">
+          <li><a href="https://isaac.earth">Isaac Corley <span class="affil"><abbr title="Taylor Geospatial">TG</abbr></span></a></li>
+          <li><a href="https://arjunashokrao.me/">Arjun Rao <span class="affil"><abbr title="University of British Columbia">UBC</abbr> &middot; <abbr title="Vector Institute">Vector</abbr></span></a></li>
+          <li><a href="https://www.estherrolf.com/">Esther Rolf <span class="affil"><abbr title="University of Colorado Boulder">CU Boulder</abbr></span></a></li>
+          <li><a href="https://konstantinklemmer.github.io/">Konstantin Klemmer <span class="affil"><abbr title="University College London">UCL</abbr> &middot; LGND</span></a></li>
+          <li><a href="https://imaginarynumber.net/">Evan Shelhamer <span class="affil"><abbr title="University of British Columbia">UBC</abbr> &middot; <abbr title="Vector Institute">Vector</abbr></span></a></li>
+          <li><a href="https://nilsleh.github.io/">Nils Lehmann <span class="affil"><abbr title="Technical University of Munich">TUM</abbr></span></a></li>
+          <li><a href="https://marcrusswurm.com/">Marc Rußwurm <span class="affil"><abbr title="Rheinische Friedrich-Wilhelms-Universität Bonn">Uni Bonn</abbr></span></a></li>
+          <li><a href="https://gengchenmai.github.io/">Gengchen Mai <span class="affil"><abbr title="University of Texas at Austin">UT Austin</abbr></span></a></li>
+          <li><a href="https://jacobsn.github.io/">Nathan Jacobs <span class="affil"><abbr title="Washington University in St. Louis">WashU</abbr></span></a></li>
+          <li><a href="https://hannah-rae.github.io/">Hannah Kerner <span class="affil"><abbr title="Arizona State University">ASU</abbr> &middot; <abbr title="Taylor Geospatial">TG</abbr></span></a></li>
+        </ul>
+        <nav class="links" aria-label="Project resources">
+          <a href="https://arxiv.org/abs/2609.25454">Paper</a>
+          <a href="https://github.com/taylor-geospatial/mind">Code</a>
+          <a href="https://huggingface.co/taylor-geospatial/MIND">Weights</a>
+          <a href="https://huggingface.co/datasets/taylor-geospatial/CoordBench">CoordBench</a>
+          <a href="https://huggingface.co/datasets/taylor-geospatial/MINDSET">MINDSET</a>
+          <a href="https://source.coop/tge-labs/mind">Global store</a>
+        </nav>
+        <nav class="section-nav" aria-label="On this page">
+          <a href="#paper">Overview</a>
+          <a href="#get-started">Get started</a>
+          <a href="#method">Method</a>
+          <a href="#results">Results</a>
+          <a href="#map-section">Explore</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+
+    <section class="globe-section" aria-label="MIND embedding globe">
+      <figure class="page globe-figure">
+        <div class="globe-stage">
+          <img id="globe-fallback" src="assets/chunks/chunk_00.png" width="562" height="281"
+            alt="PCA colors of MIND storage chunk 0, showing broad geographic patterns." />
+          <canvas id="chunk-globe" width="800" height="800" hidden role="img"
+            aria-label="Globe showing PCA colors of MIND storage chunk 0." aria-describedby="globe-caption"></canvas>
+          <button id="globe-play" type="button" hidden aria-label="Pause animation" title="Pause animation">
+            <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true">
+              <path class="globe-pause-icon" d="M6 4v12M14 4v12" fill="none" stroke="currentColor" stroke-width="2" />
+              <path class="globe-play-icon" d="M6 3l11 7-11 7z" fill="currentColor" />
+            </svg>
+          </button>
+        </div>
+        <div id="globe-embedding" class="globe-embedding" role="img" hidden>
+          <div class="globe-vector" aria-hidden="true">
+            <span class="globe-vector-symbol">z =</span>
+            <div id="globe-chunks" class="globe-chunks"></div>
+          </div>
+          <div class="globe-scale" aria-hidden="true"><span>coarse</span><span>fine-grained</span></div>
+        </div>
+        <figcaption id="globe-caption">MIND generates embeddings with spatially ordered chunks, from coarse to fine-grained.</figcaption>
+        <p id="globe-status" role="status"></p>
+      </figure>
+    </section>
+
+    <!-- ===== overview ===== -->
+    <section id="paper">
+      <div class="page">
+        <p class="kick">Overview</p>
+        <h2>Geographic embeddings with adjustable granularity.</h2>
+        <p class="lead">
+          Many remote sensing tasks require predictions in regions without labels, where the useful spatial detail depends on the task and proximity to labeled observations.
+          Existing geographic INR embeddings do not provide explicit control over coarse versus fine-grained features at test time.
+        </p>
+        <p>
+          MIND (Matryoshka Implicit Neural Distillation) maps latitude and longitude to an embedding
+          divided into chunks. In our experiments, early chunks capture broad geographic variation,
+          while later chunks add finer spatial granularity. A downstream predictor can retain only
+          leading chunks or downweight later chunks without retraining the encoder or supplying imagery.
+        </p>
+        <p>
+          That choice matters when predicting beyond nearby observations. On CoordBench's 52 datasets
+          and 78 targets, MIND with the <i>Chunked Penalty</i> has the highest aggregate regression and classification scores among
+          tested geographic INRs under random folds and every reported regional holdout.
+        </p>
+
+        <figure class="two-up">
+          <img src="assets/fig-hero-storage.svg?v=377c226" width="338" height="158" decoding="async" alt="Random-fold R-squared against representation dimension for MIND and nine pretrained INRs." />
+          <img src="assets/fig-hero-gap-ladder.svg?v=377c226" width="340" height="158" decoding="async" alt="R-squared as held-out blocks grow from 0.25 to 40 degrees for MIND+CP, GeoCLIP, Coordinate IDW, and other INRs." />
+          <figcaption>
+            <b>Representation dimension and geographic separation.</b> MIND supports several
+            truncation dimensions, each retaining a cumulative set of leading chunks. MIND+CP has
+            the highest R<sup>2</sup> among tested INRs at each regional holdout size and exceeds
+            Coordinate IDW at block sizes of 2&deg; and larger. Curves show means over five
+            fold-assignment seeds; degrees specify latitude&ndash;longitude cell widths, not minimum
+            train&ndash;test distances.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ===== get started ===== -->
+    <section id="get-started">
+      <div class="page">
+        <p class="kick">Get started</p>
+        <h2>From coordinates to embeddings in a few lines.</h2>
+        <p>Run MIND at any coordinate, or read precomputed pixel embeddings for an area of interest.</p>
+        <div class="code-example">
+          <h3 id="torch-hub-heading">Load the model with Torch Hub</h3>
+          <p>Pass latitude&ndash;longitude pairs and keep as many leading dimensions as you need.</p>
+          <pre tabindex="0" aria-labelledby="torch-hub-heading"><code class="language-python" id="torch-hub-example"><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">"taylor-geospatial/mind"</span><span class="p">,</span> <span class="s2">"mind"</span><span class="p">,</span> <span class="n">trust_repo</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">coords</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mf">37.77</span><span class="p">,</span> <span class="o">-</span><span class="mf">122.42</span><span class="p">],</span> <span class="p">[</span><span class="mf">51.51</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.13</span><span class="p">]])</span>  <span class="c1"># latitude, longitude</span>
+<span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">inference_mode</span><span class="p">():</span>
+    <span class="n">full</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="n">return_features</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># [2, 3072]</span>
+    <span class="n">features</span> <span class="o">=</span> <span class="n">full</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">64</span><span class="p">]</span>                    <span class="c1"># [2, 64]</span></code></pre>
+          <p class="code-note">Requires <code>torch</code>, <code>numpy</code>, <code>safetensors</code>, and <code>huggingface_hub</code>.</p>
+        </div>
+        <div class="code-example">
+          <h3 id="pixel-aoi-heading">Read pixel embeddings with rioxarray</h3>
+          <p>Read the first 64 dimensions for a small San Francisco AOI from the <a href="https://source.coop/tge-labs/mind">global 0.01&deg; grid</a>. The result is a NumPy array with ocean pixels set to <code>NaN</code>.</p>
+          <pre tabindex="0" aria-labelledby="pixel-aoi-heading"><code class="language-python" id="pixel-aoi-example"><span class="kn">import</span><span class="w"> </span><span class="nn">rioxarray</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">xarray</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">xr</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s2">"https://data.source.coop/tge-labs/mind/mind.zarr"</span>
+<span class="n">params</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_zarr</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">consolidated</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">emb</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">64</span><span class="p">))</span>
+<span class="n">ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_zarr</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="s2">"0"</span><span class="p">,</span> <span class="n">consolidated</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">emb</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">64</span><span class="p">))</span>
+
+<span class="c1"># A small San Francisco AOI, in longitude/latitude.</span>
+<span class="n">aoi</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">write_crs</span><span class="p">(</span><span class="s2">"EPSG:4326"</span><span class="p">)</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">clip_box</span><span class="p">(</span>
+    <span class="n">minx</span><span class="o">=-</span><span class="mf">122.50</span><span class="p">,</span> <span class="n">miny</span><span class="o">=</span><span class="mf">37.70</span><span class="p">,</span> <span class="n">maxx</span><span class="o">=-</span><span class="mf">122.30</span><span class="p">,</span> <span class="n">maxy</span><span class="o">=</span><span class="mf">37.90</span>
+<span class="p">)</span>
+<span class="c1"># Decode stored values and mask ocean pixels.</span>
+<span class="n">features</span> <span class="o">=</span> <span class="n">aoi</span><span class="o">.</span><span class="n">embedding</span> <span class="o">*</span> <span class="n">params</span><span class="o">.</span><span class="n">emb_scale</span> <span class="o">+</span> <span class="n">params</span><span class="o">.</span><span class="n">emb_offset</span>
+<span class="n">features</span> <span class="o">=</span> <span class="n">features</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">aoi</span><span class="p">[</span><span class="s2">"mask"</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>  <span class="c1"># [64, height, width]</span></code></pre>
+          <p class="code-note">Requires <code>rioxarray</code>, <code>xarray</code>, <code>dask[array]</code>, <code>zarr&gt;=3</code>, <code>fsspec</code>, and <code>aiohttp</code>. Change the bounds for your AOI and <code>64</code> for your embedding width.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== method ===== -->
+    <section id="method">
+      <div class="page">
+        <p class="kick">Method</p>
+        <h2>Distilling four teachers into one embedding.</h2>
+        <p>
+          A residual sinusoidal representation network (ReSIREN) maps Equal Earth coordinates to a
+          3072-d embedding. Nested supervision at 64, 128, 256, 512, 1024, 2048, and 3072 dimensions
+          defines seven contiguous chunks. At each supervised dimension, linear heads reconstruct
+          the embeddings of AlphaEarth Foundations (AEF), Climplicit, GeoCLIP, and SINR from all
+          leading chunks. Training uses MINDSET's 12M land coordinates; the heads are discarded afterwards.
+        </p>
+        <figure>
+          <img src="assets/fig-method.svg?v=377c226" width="407" height="182" decoding="async" loading="lazy" alt="MIND training and deployment overview diagram." />
+          <figcaption>
+            <b>MIND training and downstream prediction.</b> (a) Linear heads reconstruct each
+            teacher's embedding from the leading chunks. (b) Prediction uses the full embedding,
+            truncates it, or applies the Chunked Penalty to penalize later chunks. The encoder stays frozen.
+          </figcaption>
+        </figure>
+        <p>
+          We observe coarser spatial granularity in early chunks and finer variation in later ones;
+          nested supervision does not explicitly assign spatial granularity to any chunk. <b>Truncation</b>
+          retains the leading chunks. The <b>Chunked Penalty</b> retains the full embedding but
+          penalizes predictor coefficients for later chunks more strongly. We select the truncation
+          dimension and regularization parameters using nested cross-validation, with regional folds
+          for regional holdout and random folds otherwise.
+        </p>
+        <figure class="four-up">
+          <img src="assets/band-chunk-first.png?v=377c226" width="2250" height="887" decoding="async" loading="lazy" alt="PCA color of the first 64-d chunk on a global grid: smooth continental-scale structure." />
+          <img src="assets/band-chunk-mid.png?v=377c226" width="2250" height="887" decoding="async" loading="lazy" alt="PCA color of the intermediate 256-d chunk (dimensions 256–511): coarser regional structure." />
+          <img src="assets/band-chunk-last.png?v=377c226" width="2250" height="887" decoding="async" loading="lazy" alt="PCA color of the last 1024-d chunk (dimensions 2048–3071): variation within regions." />
+          <img src="assets/band-full.png?v=377c226" width="2250" height="887" decoding="async" loading="lazy" alt="PCA color of the full 3072-d field." />
+          <figcaption>
+            <b>Spatial granularity across chunks.</b> Chunk 0 changes gradually across continents,
+            chunk 3 adds coarser regional structure, and chunk 6 varies within regions. The full
+            embedding combines broad gradients with local detail. Each panel maps its top three
+            principal components to color. These seven training chunks have different widths.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ===== results ===== -->
+    <section id="results">
+      <div class="page">
+        <p class="kick">Results</p>
+        <h2>CoordBench results.</h2>
+        <p>
+          CoordBench contains 52 datasets and 78 prediction targets from nine sources. We fit
+          linear predictors with unpenalized intercepts to frozen embeddings and report macro averages across datasets, using
+          five folds and five fold-assignment seeds. Regional holdouts withhold whole
+          latitude&ndash;longitude cells. Regression R<sup>2</sup> is floored at &minus;1 per target
+          before averaging. MIND+CP leads the aggregate comparison; GeoCLIP has higher socioeconomic
+          R<sup>2</sup> at 20&deg; and 40&deg;.
+        </p>
+        <p class="table-hint">Scroll the table to compare all regional holdouts.</p>
+        <div class="tablewrap" tabindex="0" role="region" aria-label="CoordBench scores, horizontally scrollable">
+          <table class="res">
+            <thead>
+              <tr>
+                <th></th>
+                <th colspan="5" scope="colgroup">R<sup>2</sup></th>
+                <th colspan="5" scope="colgroup">Accuracy (%)</th>
+              </tr>
+              <tr class="sub">
+                <th>Method</th>
+                <th>Random</th><th>2&deg;</th><th>10&deg;</th><th>20&deg;</th><th>40&deg;</th>
+                <th>Random</th><th>2&deg;</th><th>10&deg;</th><th>20&deg;</th><th>40&deg;</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="ref"><td>Coordinate IDW</td><td><b>0.675</b></td><td>0.435</td><td>0.187</td><td>0.093</td><td>-0.053</td><td>67.7</td><td>62.8</td><td>55.7</td><td>53.0</td><td>51.2</td></tr>
+              <tr><td>Cartesian 3D</td><td>0.137</td><td>0.089</td><td>-0.088</td><td>-0.173</td><td>-0.423</td><td>51.8</td><td>50.6</td><td>46.4</td><td>45.8</td><td>44.4</td></tr>
+              <tr><td>Wrap (Sin/Cos)</td><td>0.204</td><td>0.155</td><td>-0.025</td><td>-0.116</td><td>-0.344</td><td>53.1</td><td>52.2</td><td>48.3</td><td>46.8</td><td>45.2</td></tr>
+              <tr><td>SINR</td><td>0.522</td><td>0.394</td><td>0.089</td><td>-0.051</td><td>-0.211</td><td>63.8</td><td>61.4</td><td>55.2</td><td>51.4</td><td>49.5</td></tr>
+              <tr><td>SatCLIP</td><td>0.504</td><td>0.375</td><td>0.153</td><td>0.108</td><td>-0.082</td><td>63.8</td><td>60.8</td><td>55.0</td><td>52.4</td><td>51.9</td></tr>
+              <tr><td>Climplicit</td><td>0.590</td><td>0.435</td><td>0.190</td><td>0.120</td><td>-0.086</td><td>66.7</td><td>63.2</td><td>57.1</td><td>54.6</td><td>52.8</td></tr>
+              <tr><td>GeoCLIP</td><td>0.543</td><td>0.463</td><td>0.303</td><td>0.287</td><td><i>0.151</i></td><td>63.5</td><td>60.6</td><td>56.0</td><td>54.6</td><td>54.2</td></tr>
+              <tr><td>CSP-iNat</td><td>0.429</td><td>0.339</td><td>0.092</td><td>-0.055</td><td>-0.310</td><td>61.4</td><td>59.4</td><td>54.0</td><td>51.3</td><td>48.2</td></tr>
+              <tr><td>CSP-fMoW</td><td>0.407</td><td>0.335</td><td>0.101</td><td>-0.018</td><td>-0.276</td><td>61.7</td><td>60.0</td><td>54.8</td><td>51.9</td><td>47.7</td></tr>
+              <tr><td>GAIR</td><td>0.427</td><td>0.274</td><td>-0.055</td><td>-0.090</td><td>-0.322</td><td>60.3</td><td>57.1</td><td>51.7</td><td>49.6</td><td>48.5</td></tr>
+              <tr><td>TTE</td><td>0.563</td><td>0.420</td><td>0.235</td><td>0.154</td><td>-0.014</td><td>66.2</td><td>62.5</td><td>58.2</td><td>55.8</td><td>54.7</td></tr>
+              <tr><td>TaxaBind</td><td>0.512</td><td>0.402</td><td>0.240</td><td>0.210</td><td>0.053</td><td>63.9</td><td>61.0</td><td>55.9</td><td>54.4</td><td>53.7</td></tr>
+              <tr><td>SLED</td><td>0.557</td><td>0.375</td><td>0.057</td><td>-0.099</td><td>-0.394</td><td>66.0</td><td>62.0</td><td>53.9</td><td>49.9</td><td>46.0</td></tr>
+              <tr class="ours"><td>MIND<sub>64</sub></td><td>0.504</td><td>0.447</td><td>0.309</td><td>0.281</td><td>0.128</td><td>62.5</td><td>60.5</td><td>56.9</td><td>55.3</td><td>54.2</td></tr>
+              <tr class="ours"><td>MIND<sub>128</sub></td><td>0.533</td><td>0.465</td><td><i>0.327</i></td><td><i>0.303</i></td><td>0.136</td><td>64.0</td><td>62.0</td><td>57.7</td><td>56.3</td><td>54.8</td></tr>
+              <tr class="ours"><td>MIND<sub>256</sub></td><td>0.556</td><td>0.476</td><td>0.322</td><td>0.279</td><td>0.116</td><td>65.2</td><td>63.0</td><td>58.1</td><td><i>56.8</i></td><td><i>55.3</i></td></tr>
+              <tr class="ours"><td>MIND<sub>3k</sub></td><td>0.642</td><td><i>0.492</i></td><td>0.280</td><td>0.211</td><td>0.019</td><td><i>67.8</i></td><td><i>64.4</i></td><td><i>59.1</i></td><td>56.2</td><td>54.6</td></tr>
+              <tr class="ours best"><td>MIND+CP</td><td><i>0.643</i></td><td><b>0.508</b></td><td><b>0.356</b></td><td><b>0.315</b></td><td><b>0.184</b></td><td><b>67.8</b></td><td><b>64.6</b></td><td><b>59.9</b></td><td><b>57.8</b></td><td><b>56.3</b></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="caption">
+          Means across five fold-assignment seeds. Degrees indicate regional holdout block sizes.
+          Bold and italics mark the best and second-best result across all methods, including the
+          unlearned Coordinate IDW reference. MIND<sub>3k</sub> uses all 3072 dimensions.
+          Each column uses the same datasets for every method: 36, 36, 36, 35, and 35 regression
+          datasets, and 16, 16, 15, 15, and 15 classification datasets, respectively.
+        </p>
+
+        <figure class="two-up">
+          <img src="assets/fig-width-curves.svg?v=377c226" width="346" height="162" decoding="async" loading="lazy" alt="R-squared against representation dimension under random folds and with 10-degree regions held out." />
+          <img src="assets/fig-halfsill.svg?v=377c226" width="350" height="122" decoding="async" loading="lazy" alt="Characteristic distance against representation dimension for MIND." />
+          <figcaption>
+            <b>Chunk performance and spatial granularity across truncations.</b> Adding chunks
+            raises random-fold R<sup>2</sup> from 0.504 to 0.642 but lowers the 10&deg; regional-holdout
+            score beyond 128 dimensions. The characteristic distance decreases from about 790&nbsp;km
+            for the first 64 dimensions to 200&nbsp;km for the full embedding. It is the separation
+            at which the semivariogram reaches half its large-distance reference value.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ===== resources ===== -->
+    <section id="resources">
+      <div class="page">
+        <p class="kick">Resources</p>
+        <h2>Released artifacts.</h2>
+        <ul class="reslist">
+          <li>
+            <span class="rk">Weights</span>
+            <span>
+              <a class="rt" href="https://huggingface.co/taylor-geospatial/MIND">MIND encoder</a>
+              <span class="rd">3072-d trunk (fp16 safetensors, 227&nbsp;MB; fp32, ONNX, and PyTorch ExportedProgram files) and MIND-small, an 18&times;-smaller distilled student.</span>
+            </span>
+          </li>
+          <li>
+            <span class="rk">Benchmark</span>
+            <span>
+              <a class="rt" href="https://huggingface.co/datasets/taylor-geospatial/CoordBench">CoordBench</a>
+              <span class="rd">Source tables for the paper's 52 datasets and 78 coordinate-to-label targets, with fold assignments generated from coordinates by the evaluation code.</span>
+            </span>
+          </li>
+          <li>
+            <span class="rk">Dataset</span>
+            <span>
+              <a class="rt" href="https://huggingface.co/datasets/taylor-geospatial/MINDSET">MINDSET</a>
+              <span class="rd">The four teachers' embeddings at the 12M training coordinates, Hilbert-sorted GeoParquet.</span>
+            </span>
+          </li>
+          <li>
+            <span class="rk">Global store</span>
+            <span>
+              <a class="rt" href="https://source.coop/tge-labs/mind">tge-labs/mind on Source Coop</a>
+              <span class="rd">All 3072 dimensions on a 0.01&deg; grid as a dimension-chunked multiscale Zarr&nbsp;v3 (64-d slice 1.6&nbsp;GB, 256-d 7.2&nbsp;GB, full 100&nbsp;GB), a PCA-RGB COG, and H3 r4/r5 GeoParquet overviews; every piece readable by HTTP range request.</span>
+            </span>
+          </li>
+        </ul>
+
+      </div>
+    </section>
+
+    <!-- ===== embedding explorer ===== -->
+    <section id="map-section">
+      <div class="page">
+        <p class="kick">Explore</p>
+        <h2>From broad structure to finer detail.</h2>
+        <p>
+          Compare three 64-d storage chunks with the full 3072-d embedding. Early chunks show
+          broad geographic variation, while later chunks add finer spatial granularity.
+        </p>
+        <div id="map-controls" class="map-controls" hidden>
+          <div class="seg" role="group" aria-label="Embedding chunks">
+            <button type="button" data-view="0" aria-pressed="true">First chunk</button>
+            <button type="button" data-view="1" aria-pressed="false">Middle chunk</button>
+            <button type="button" data-view="2" aria-pressed="false">Last chunk</button>
+            <button type="button" data-view="3" aria-pressed="false">All chunks</button>
+          </div>
+          <button type="button" id="map-activate">Enable pan &amp; zoom</button>
+        </div>
+        <div class="map-frame">
+          <img id="map-preview" src="assets/chunks/chunk_00.png" width="562" height="281"
+            loading="lazy" decoding="async" alt="First 64-d storage chunk: broad geographic structure in PCA false color." />
+          <div id="map" role="region" aria-label="Embedding map; use arrow keys to pan and plus or minus to zoom" hidden></div>
+        </div>
+        <p id="map-status" class="map-status" role="status" aria-live="polite">First chunk &middot; dimensions 0&ndash;63.</p>
+        <p class="caption">
+          The individual storage chunks are precomputed 0.64&deg; overviews; All chunks uses the
+          paper's 0.16&deg; full-embedding PCA map, cropped to 58&deg;S&ndash;84&deg;N.
+          Each view has its own PCA colors, so compare spatial patterns, not colors between views.
+          <a href="https://source.coop/tge-labs/mind">Get the full-resolution data</a>.
+        </p>
+      </div>
+    </section>
+
+    <!-- ===== inside the store ===== -->
+    <section id="store" class="dark">
+      <div class="wide">
+        <p class="kick">Data details</p>
+        <h2>Inside the global store.</h2>
+        <div class="store-content">
+            <p class="lead">
+              The global 0.01&deg; embedding is stored as a Zarr&nbsp;v3 array of shape
+              <span class="tnum">(3072, 18000, 36000)</span>, with 64 dimensions per storage chunk
+              and <span class="tnum">64&times;512&times;512</span> shards. These 48 equal-sized
+              storage chunks divide the paper's seven training chunks into smaller pieces for reading.
+              A predictor using 64 dimensions reads one set of shards; the full embedding reads 48.
+              Ocean shards are omitted.
+            </p>
+
+            <div class="store-grid">
+              <div class="explorer" id="explorer">
+                <div class="ex-head">
+                  <span class="ex-title">Shards read for leading chunks</span>
+                  <span class="ex-readout" id="ex-readout"></span>
+                  <button type="button" id="store-retry" class="strip-play" hidden>Retry loading data</button>
+                </div>
+                <svg id="ex-svg" viewBox="0 0 560 330" aria-label="Diagram of the chunked embedding array"></svg>
+                <div class="ex-controls">
+                  <label class="ex-ctl">
+                    <span class="ex-lab">leading dimensions <b id="ex-prefix-lab">64</b></span>
+                    <input type="range" id="ex-prefix" min="0" max="6" step="1" value="0" />
+                  </label>
+                  <label class="ex-ctl">
+                    <span class="ex-lab">level <b id="ex-level-lab">0</b> &middot; <span id="ex-res-lab">0.01&deg;</span></span>
+                    <input type="range" id="ex-level" min="0" max="6" step="1" value="0" />
+                  </label>
+                </div>
+                <div class="ex-stats" id="ex-stats"></div>
+              </div>
+
+              <div class="density" id="density">
+                <div class="ex-head">
+                  <span class="ex-title">Shard density, level 0, chunk 0</span>
+                  <span class="ex-readout" id="dn-readout">hover a shard</span>
+                </div>
+                <canvas id="dn-canvas" width="710" height="360"></canvas>
+                <p class="ex-note">
+                  Each cell is one 512&times;512-pixel shard of the first 64-d chunk at 0.01&deg;, colored by
+                  its compressed size on disk. Empty cells are open ocean and were never written.
+                </p>
+              </div>
+            </div>
+
+            <div class="strip-head">
+              <span class="ex-title">The 48 storage chunks, grouped by dimension</span>
+              <span class="strip-ctl">
+                <button type="button" class="strip-play" id="strip-play">Play</button>
+                <span class="ex-readout" id="strip-readout"></span>
+              </span>
+            </div>
+            <div class="strip" id="strip"></div>
+            <div class="strip-focus" id="strip-focus">
+              <img id="strip-img" alt="Selected chunk rendered as PCA(3) color" />
+              <div class="strip-meta" id="strip-meta"></div>
+            </div>
+            <canvas id="scale-chart" class="scale-chart" width="1060" height="220"></canvas>
+            <p class="caption on-dark">
+              Each thumbnail maps one 64-d storage chunk to color with its own PCA. Colors are only comparable
+              within each thumbnail. The bar under each thumbnail is the
+              chunk's roughness (mean squared spatial gradient per unit variance on the level-5 grid).
+              The chart plots that roughness by storage chunk together with the paper's characteristic
+              distance by truncation dimension, which contracts from about 790&nbsp;km at 64 dimensions to 200&nbsp;km at 3072.
+            </p>
+        </div>
+      </div>
+    </section>
+
+    </main>
+
+    <!-- ===== footer ===== -->
+    <footer>
+      <div class="page foot">
+        <svg viewBox="60 60 96 96" aria-hidden="true"><use href="#tg-mark" /></svg>
+        <div class="foot-meta">
+          <span class="nm">Taylor Geospatial</span> &middot; Models are released under MIT;
+          benchmark and source-data licenses are recorded per dataset. &copy; 2026.
+          <a href="assets/terrain-attribution.txt">Terrain credits</a>.
+        </div>
+      </div>
+    </footer>
+
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+      <defs>
+        <g id="tg-mark" fill="currentColor">
+          <path d="M87.9,98.6l-8.8,8.8c-.3.3-.3.8,0,1.1l8.8,8.8c.6.6,1.6,0,1.3-.8-2.1-5.5-2.1-11.6,0-17,.3-.8-.7-1.4-1.3-.8Z"/>
+          <path d="M98.6,87.9l8.8-8.8c.3-.3.8-.3,1.1,0l8.8,8.8c.6.6,0,1.6-.8,1.3-5.5-2.1-11.6-2.1-17,0-.8.3-1.4-.7-.8-1.3Z"/>
+          <path d="M128.1,117.4l8.8-8.8c.3-.3.3-.8,0-1.1l-8.8-8.8c-.6-.6-1.6,0-1.3.8,2.1,5.5,2.1,11.6,0,17-.3.8.7,1.4,1.3.8Z"/>
+          <path d="M117.4,128.1l-8.8,8.8c-.3.3-.8.3-1.1,0l-8.8-8.8c-.6-.6,0-1.6.8-1.3,5.5,2.1,11.6,2.1,17,0,.8-.3,1.4.7.8,1.3Z"/>
+          <path d="M145.6,88v-16.5c0-.5-.4-1-1-1h-16.1c-1,0-1.4,1.4-.4,1.9,7,3.2,12.6,8.9,15.6,16,.4,1,1.9.7,1.9-.4Z"/>
+          <path d="M70.4,128v16.5c0,.5.4,1,1,1h16.1c1,0,1.4-1.4.4-1.9-7-3.2-12.6-8.9-15.6-16-.4-1-1.9-.7-1.9.4Z"/>
+          <path d="M128.1,145.4h16.5c.5,0,1-.4,1-1v-16.1c0-1-1.4-1.4-1.9-.4-3.2,7-8.9,12.6-16,15.6-1,.4-.7,1.9.4,1.9Z"/>
+          <path d="M87.9,70.6h-16.5c-.5,0-1,.4-1,1v16.1c0,1,1.4,1.4,1.9.4,3.2-7,8.9-12.6,16-15.6,1-.4.7-1.9-.4-1.9Z"/>
+        </g>
+      </defs>
+    </svg>
+
+    <script src="globe-renderer.js?v=20260921-3" defer></script>
+    <script src="globe.js?v=20260922-1" defer></script>
+    <script src="map.js?v=20260920-3" defer></script>
+    <script src="map-color.js" defer></script>
+    <script src="store.js?v=20260920-3" defer></script>
+  </body>
+</html>

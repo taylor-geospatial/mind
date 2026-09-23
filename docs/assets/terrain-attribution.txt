@@ -1,0 +1,35 @@
+Globe terrain
+
+Elevation data: Mapzen Terrain Tiles, hosted by the AWS Open Data Registry.
+https://registry.opendata.aws/terrain-tiles/
+https://github.com/tilezen/joerd/blob/master/docs/attribution.md
+
+globe-dem.png is derived from the 16 zoom-2 GeoTIFF tiles. Elevations were
+resampled bilinearly from Web Mercator to a 2048 x 1024 equirectangular grid,
+with pixel edges at longitude -180 to 180 and latitude 90 to -90 degrees.
+Grayscale 0 to 255 encodes 0 to 9000 meters. Negative elevations and missing
+polar coverage are zero. The globe uses exaggerated surface normals for
+visual relief, fading the effect above 80 degrees latitude; it does not
+displace the sphere or change the source PCA textures. Regenerate with:
+uv run python scripts/data/build_globe_dem.py
+
+Source attribution
+
+* ArcticDEM terrain data DEM(s) were created from DigitalGlobe, Inc., imagery and
+  funded under National Science Foundation awards 1043681, 1559691, and 1542736;
+* Australia terrain data © Commonwealth of Australia (Geoscience Australia) 2017;
+* Austria terrain data © offene Daten Österreichs – Digitales Geländemodell (DGM)
+  Österreich;
+* Canada terrain data contains information licensed under the Open Government
+  Licence – Canada;
+* Europe terrain data produced using Copernicus data and information funded by the
+  European Union - EU-DEM layers;
+* Global ETOPO1 terrain data U.S. National Oceanic and Atmospheric Administration;
+* Mexico terrain data source: INEGI, Continental relief, 2016;
+* New Zealand terrain data Copyright 2011 Crown copyright (c) Land Information New
+  Zealand and the New Zealand Government (All rights reserved);
+* Norway terrain data © Kartverket;
+* United Kingdom terrain data © Environment Agency copyright and/or database right
+  2015. All rights reserved;
+* United States 3DEP (formerly NED) and global GMTED2010 and SRTM terrain data
+  courtesy of the U.S. Geological Survey.

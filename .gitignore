@@ -1,0 +1,27 @@
+# Python and local tools
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ruff_cache/
+.pytest_cache/
+.cache/
+.coverage*
+htmlcov/
+build/
+dist/
+.DS_Store
+.env
+.env.*
+
+# Downloaded data, model weights, and generated results
+/data/
+/weights/
+/results/
+*.pt
+*.safetensors
+*.onnx*
+*.pt2
+*.zarr/
+wandb/
+logs/

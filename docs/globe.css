@@ -1,0 +1,78 @@
+/* Animated PCA figure, using the project's existing type and TG palette. */
+.globe-section { padding: 12px 0 28px; }
+.globe-figure { margin: 0 auto; text-align: center; }
+.globe-stage {
+  position: relative;
+  width: min(100%, 420px);
+  margin: 0 auto;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(ellipse at center, #dedfd080, transparent 68%);
+}
+#chunk-globe { width: 100%; height: 100%; display: block; cursor: grab; touch-action: pan-y; }
+#chunk-globe:active { cursor: grabbing; }
+#globe-fallback { width: 100%; height: auto; background: #241d19; border: 0; border-radius: 2px; }
+#globe-play {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+#globe-play:hover { color: var(--ink); background: #3b1e1c08; }
+#globe-play .globe-play-icon { display: none; }
+#globe-play[aria-label="Play animation"] .globe-play-icon { display: block; }
+#globe-play[aria-label="Play animation"] .globe-pause-icon { display: none; }
+.globe-embedding { width: min(100%, 380px); margin: 16px auto 18px; }
+.globe-vector { display: flex; align-items: center; gap: 10px; }
+.globe-vector-symbol { flex: none; font-style: italic; font-size: 1.1rem; }
+.globe-chunks {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(48, minmax(0, 1fr));
+  gap: 2px;
+  flex: 1;
+  padding: 6px;
+}
+.globe-chunks::before, .globe-chunks::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  border: 1px solid var(--muted);
+}
+.globe-chunks::before { left: 0; border-right: 0; }
+.globe-chunks::after { right: 0; border-left: 0; }
+.globe-chunk { --from: 0; --to: 0; position: relative; height: 16px; background: var(--rule); }
+.globe-chunk.was-active { --from: 1; }
+.globe-chunk.is-active { --to: 1; }
+.globe-chunk::after {
+  content: "";
+  position: absolute;
+  inset: -3px 0;
+  background: var(--ours);
+  opacity: calc(var(--from) * (1 - var(--blend, 1)) + var(--to) * var(--blend, 1));
+}
+.globe-scale {
+  display: flex;
+  justify-content: space-between;
+  margin: 7px 6px 0 39px;
+  color: var(--muted);
+  font: 0.6rem var(--mono);
+}
+#globe-caption { margin-top: 4px; text-wrap: balance; }
+#globe-status { margin: 8px 0 0; color: var(--muted); font-size: 0.8rem; }
+#globe-status:empty { display: none; }
+@media (max-width: 640px) {
+  .globe-section { padding-top: 8px; }
+  .globe-stage { max-width: 360px; }
+}

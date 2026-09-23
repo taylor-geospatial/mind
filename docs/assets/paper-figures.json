@@ -1,0 +1,20 @@
+{
+  "paper_commit": "377c22643ce4bf8b9848bba149c9284244621365",
+  "sha256": {
+    "band-chunk-first.png": "7b40e564aaf9ddb72954b3dfe099eb59031f143d563d94d1c5270c38e3941889",
+    "band-chunk-last.png": "04f0b57f0d3c78f17c5f5b6eb07cb907b48fda788a8d0bf6f0dfafc84b4aa2ff",
+    "band-chunk-mid.png": "3ff7a4858cbdea6df588f40fa00f69132326705816ba05fd9d46a73757b6fa4f",
+    "band-full.png": "56fdfb076c4584f3abd66b812577862188dd88aba0aa0ccdfdded5b96b4e01f8",
+    "fig-halfsill.svg": "ca4364a5ec4a1cfd5e9b605145a0392f0a4919941f9a57cc7510eaa7ecddcdd4",
+    "fig-hero-gap-ladder.svg": "748ab5bf5626785d56140f06002a1605baef8a0683f61b8b2c88bb36ed7ce3f4",
+    "fig-hero-storage.svg": "2a66c1e27658ec256bfcbbbe0deccbdc03bf919e425d6ec3d000e2fc16159b54",
+    "fig-method.svg": "90f0d3e6f83a33638abfbc06c2af22c98446874328c314597743030c358449ed",
+    "fig-width-curves.svg": "b0abc0d94b3da4ade76ce597ac25b8f716b6a7344ecd557048f87b4d7656d0ed"
+  },
+  "source_sha256": {
+    "paper/figs/tikz-figs.tex": "c57b5a64c9c5c00f4bd5b2033592f38d1ecffc7400f67198af49a97e7c6dc9a7",
+    "paper/tables/coordbench.tex": "d6b01d7a837a158597854e225eeaff6f78428794b1af5937193513d2b1f4d835",
+    "scripts/paper/tikhonov_probe.py": "24b7df8c70a4a56c6fd724a1cd512762f2f6150421eccdf75335822a91316e43",
+    "src/mind/eval/probe.py": "64d2cc8a7e6f81d4a91d29d14ea8563f1e1127508c19de7f6eb4171cb0199976"
+  }
+}
