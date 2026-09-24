@@ -163,5 +163,21 @@ Set `MIND_EMBED_CACHE` to share cached features between runs.
 `COORDBENCH_ROOT` must contain `data/<config>/data.parquet`; unset it to download tables from Hugging Face.
 See [scripts/README.md](scripts/README.md) for aggregation, controls, and spatial analyses, or the [CoordBench guide](scripts/data/coordbench/README.md) for dataset construction and sources.
 
+## Citation
+
+If you find our work useful, please cite the paper:
+
+```
+@misc{corley2026mindgapgeographicimplicit,
+      title={MIND the Gap: A Geographic Implicit Neural Representation with Adjustable Spatial Scale}, 
+      author={Isaac Corley and Arjun Rao and Esther Rolf and Konstantin Klemmer and Evan Shelhamer and Nils Lehmann and Marc Rußwurm and Gengchen Mai and Nathan Jacobs and Hannah Kerner},
+      year={2026},
+      eprint={2609.25454},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2609.25454}, 
+}
+```
+
 MIT licensed; see [LICENSE](LICENSE).
 Upstream data and model licenses are recorded in their source repositories and the dataset provenance manifest.
