@@ -13,7 +13,7 @@
       property="og:description"
       content="A coordinate-only neural field whose leading chunks capture broad geographic variation and whose later chunks add finer spatial granularity. Released as a dimension-chunked global 0.01° Zarr store."
     />
-    <meta property="og:image" content="assets/fig-hero-storage.svg?v=8475d3d" />
+    <meta property="og:image" content="assets/fig-hero-storage.svg?v=377c226" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -22,8 +22,8 @@
       rel="stylesheet"
     />
 
-    <link rel="stylesheet" href="style.css?v=20260921-3" />
-    <link rel="stylesheet" href="globe.css?v=20260921-1" />
+    <link rel="stylesheet" href="style.css?v=20260923-3" />
+    <link rel="stylesheet" href="globe.css?v=20260922-1" />
     <link rel="stylesheet" href="examples.css?v=20260921-1" />
   </head>
   <body>
@@ -31,9 +31,8 @@
     <!-- ===== header ===== -->
     <header class="hero">
       <div class="hero-heading">
-        <a class="research-home" href="https://research.taylorgeospatial.org/" aria-label="Taylor Geospatial Research home">
-          <svg class="mark" viewBox="60 60 96 96" aria-hidden="true"><use href="#tg-mark" /></svg>
-          <span>Taylor Geospatial Research</span>
+        <a class="research-home" href="https://taylorgeospatial.org/innovation-program/" aria-label="Taylor Geospatial Innovation Program">
+          <img class="research-logo" src="assets/taylor-geospatial-oneline.svg" width="753" height="81" alt="Taylor Geospatial" />
         </a>
         <h1><span class="it">MIND</span> the Gap</h1>
       </div>
@@ -45,7 +44,7 @@
           <li><a href="https://isaac.earth">Isaac Corley <span class="affil"><abbr title="Taylor Geospatial">TG</abbr></span></a></li>
           <li><a href="https://arjunashokrao.me/">Arjun Rao <span class="affil"><abbr title="University of British Columbia">UBC</abbr> &middot; <abbr title="Vector Institute">Vector</abbr></span></a></li>
           <li><a href="https://www.estherrolf.com/">Esther Rolf <span class="affil"><abbr title="University of Colorado Boulder">CU Boulder</abbr></span></a></li>
-          <li><a href="https://konstantinklemmer.github.io/">Konstantin Klemmer <span class="affil"><abbr title="University College London">UCL</abbr></span></a></li>
+          <li><a href="https://konstantinklemmer.github.io/">Konstantin Klemmer <span class="affil"><abbr title="University College London">UCL</abbr> &middot; LGND</span></a></li>
           <li><a href="https://imaginarynumber.net/">Evan Shelhamer <span class="affil"><abbr title="University of British Columbia">UBC</abbr> &middot; <abbr title="Vector Institute">Vector</abbr></span></a></li>
           <li><a href="https://nilsleh.github.io/">Nils Lehmann <span class="affil"><abbr title="Technical University of Munich">TUM</abbr></span></a></li>
           <li><a href="https://marcrusswurm.com/">Marc Rußwurm <span class="affil"><abbr title="Rheinische Friedrich-Wilhelms-Universität Bonn">Uni Bonn</abbr></span></a></li>
@@ -54,6 +53,7 @@
           <li><a href="https://hannah-rae.github.io/">Hannah Kerner <span class="affil"><abbr title="Arizona State University">ASU</abbr> &middot; <abbr title="Taylor Geospatial">TG</abbr></span></a></li>
         </ul>
         <nav class="links" aria-label="Project resources">
+          <a href="https://arxiv.org/abs/2609.25454">Paper</a>
           <a href="https://github.com/taylor-geospatial/mind">Code</a>
           <a href="https://huggingface.co/taylor-geospatial/MIND">Weights</a>
           <a href="https://huggingface.co/datasets/taylor-geospatial/CoordBench">CoordBench</a>
@@ -86,6 +86,13 @@
             </svg>
           </button>
         </div>
+        <div id="globe-embedding" class="globe-embedding" role="img" hidden>
+          <div class="globe-vector" aria-hidden="true">
+            <span class="globe-vector-symbol">z =</span>
+            <div id="globe-chunks" class="globe-chunks"></div>
+          </div>
+          <div class="globe-scale" aria-hidden="true"><span>coarse</span><span>fine-grained</span></div>
+        </div>
         <figcaption id="globe-caption">MIND generates embeddings with spatially ordered chunks, from coarse to fine-grained.</figcaption>
         <p id="globe-status" role="status"></p>
       </figure>
@@ -97,6 +104,10 @@
         <p class="kick">Overview</p>
         <h2>Geographic embeddings with adjustable granularity.</h2>
         <p class="lead">
+          Many remote sensing tasks require predictions in regions without labels, where the useful spatial detail depends on the task and proximity to labeled observations.
+          Existing geographic INR embeddings do not provide explicit control over coarse versus fine-grained features at test time.
+        </p>
+        <p>
           MIND (Matryoshka Implicit Neural Distillation) maps latitude and longitude to an embedding
           divided into chunks. In our experiments, early chunks capture broad geographic variation,
           while later chunks add finer spatial granularity. A downstream predictor can retain only
@@ -109,8 +120,8 @@
         </p>
 
         <figure class="two-up">
-          <img src="assets/fig-hero-storage.svg?v=8475d3d" width="338" height="158" decoding="async" alt="Random-fold R-squared against representation dimension for MIND and nine pretrained INRs." />
-          <img src="assets/fig-hero-gap-ladder.svg?v=8475d3d" width="340" height="158" decoding="async" alt="R-squared as held-out blocks grow from 0.25 to 40 degrees for MIND+CP, GeoCLIP, Coordinate IDW, and other INRs." />
+          <img src="assets/fig-hero-storage.svg?v=377c226" width="338" height="158" decoding="async" alt="Random-fold R-squared against representation dimension for MIND and nine pretrained INRs." />
+          <img src="assets/fig-hero-gap-ladder.svg?v=377c226" width="340" height="158" decoding="async" alt="R-squared as held-out blocks grow from 0.25 to 40 degrees for MIND+CP, GeoCLIP, Coordinate IDW, and other INRs." />
           <figcaption>
             <b>Representation dimension and geographic separation.</b> MIND supports several
             truncation dimensions, each retaining a cumulative set of leading chunks. MIND+CP has
@@ -176,7 +187,7 @@
           leading chunks. Training uses MINDSET's 12M land coordinates; the heads are discarded afterwards.
         </p>
         <figure>
-          <img src="assets/fig-method.svg?v=20260920-white" width="407" height="182" decoding="async" loading="lazy" alt="MIND training and deployment overview diagram." />
+          <img src="assets/fig-method.svg?v=377c226" width="407" height="182" decoding="async" loading="lazy" alt="MIND training and deployment overview diagram." />
           <figcaption>
             <b>MIND training and downstream prediction.</b> (a) Linear heads reconstruct each
             teacher's embedding from the leading chunks. (b) Prediction uses the full embedding,
@@ -192,10 +203,10 @@
           for regional holdout and random folds otherwise.
         </p>
         <figure class="four-up">
-          <img src="assets/band-chunk-first.png?v=8475d3d" width="2250" height="887" decoding="async" loading="lazy" alt="PCA color of the first 64-d chunk on a global grid: smooth continental-scale structure." />
-          <img src="assets/band-chunk-mid.png?v=8475d3d" width="2250" height="887" decoding="async" loading="lazy" alt="PCA color of the intermediate 256-d chunk (dimensions 256–511): coarser regional structure." />
-          <img src="assets/band-chunk-last.png?v=8475d3d" width="2250" height="887" decoding="async" loading="lazy" alt="PCA color of the last 1024-d chunk (dimensions 2048–3071): variation within regions." />
-          <img src="assets/band-full.png?v=8475d3d" width="2250" height="887" decoding="async" loading="lazy" alt="PCA color of the full 3072-d field." />
+          <img src="assets/band-chunk-first.png?v=377c226" width="2250" height="887" decoding="async" loading="lazy" alt="PCA color of the first 64-d chunk on a global grid: smooth continental-scale structure." />
+          <img src="assets/band-chunk-mid.png?v=377c226" width="2250" height="887" decoding="async" loading="lazy" alt="PCA color of the intermediate 256-d chunk (dimensions 256–511): coarser regional structure." />
+          <img src="assets/band-chunk-last.png?v=377c226" width="2250" height="887" decoding="async" loading="lazy" alt="PCA color of the last 1024-d chunk (dimensions 2048–3071): variation within regions." />
+          <img src="assets/band-full.png?v=377c226" width="2250" height="887" decoding="async" loading="lazy" alt="PCA color of the full 3072-d field." />
           <figcaption>
             <b>Spatial granularity across chunks.</b> Chunk 0 changes gradually across continents,
             chunk 3 adds coarser regional structure, and chunk 6 varies within regions. The full
@@ -213,7 +224,7 @@
         <h2>CoordBench results.</h2>
         <p>
           CoordBench contains 52 datasets and 78 prediction targets from nine sources. We fit
-          linear predictors to frozen embeddings and report macro averages across datasets, using
+          linear predictors with unpenalized intercepts to frozen embeddings and report macro averages across datasets, using
           five folds and five fold-assignment seeds. Regional holdouts withhold whole
           latitude&ndash;longitude cells. Regression R<sup>2</sup> is floored at &minus;1 per target
           before averaging. MIND+CP leads the aggregate comparison; GeoCLIP has higher socioeconomic
@@ -235,24 +246,24 @@
               </tr>
             </thead>
             <tbody>
-              <tr class="ref"><td>Coordinate IDW</td><td><b>0.675</b></td><td>0.435</td><td>0.187</td><td>0.093</td><td>-0.053</td><td><i>67.7</i></td><td>62.8</td><td>55.7</td><td>53.0</td><td>51.2</td></tr>
-              <tr><td>Cartesian 3D</td><td>0.137</td><td>0.090</td><td>-0.087</td><td>-0.220</td><td>-0.455</td><td>51.8</td><td>50.7</td><td>46.3</td><td>44.9</td><td>44.6</td></tr>
-              <tr><td>Wrap (Sin/Cos)</td><td>0.204</td><td>0.155</td><td>-0.028</td><td>-0.142</td><td>-0.367</td><td>53.4</td><td>52.6</td><td>48.6</td><td>47.1</td><td>45.4</td></tr>
-              <tr><td>SINR</td><td>0.522</td><td>0.346</td><td>-0.413</td><td>-0.577</td><td>-0.661</td><td>63.9</td><td>61.4</td><td>53.5</td><td>49.0</td><td>47.4</td></tr>
-              <tr><td>SatCLIP</td><td>0.504</td><td>0.366</td><td>0.073</td><td>-0.038</td><td>-0.228</td><td>63.7</td><td>60.7</td><td>54.2</td><td>51.7</td><td>50.9</td></tr>
-              <tr><td>Climplicit</td><td>0.589</td><td>0.381</td><td>0.038</td><td>-0.067</td><td>-0.227</td><td>66.3</td><td>62.1</td><td>56.5</td><td>53.5</td><td>51.3</td></tr>
-              <tr><td>GeoCLIP</td><td>0.542</td><td>0.440</td><td>0.267</td><td><i>0.251</i></td><td><i>0.147</i></td><td>63.1</td><td>59.9</td><td>55.1</td><td>53.2</td><td>54.0</td></tr>
-              <tr><td>CSP-iNat</td><td>0.429</td><td>0.341</td><td>0.085</td><td>-0.056</td><td>-0.371</td><td>61.4</td><td>59.2</td><td>53.8</td><td>50.3</td><td>47.4</td></tr>
-              <tr><td>CSP-fMoW</td><td>0.407</td><td>0.338</td><td>0.098</td><td>-0.076</td><td>-0.399</td><td>61.7</td><td>60.0</td><td>54.6</td><td>50.7</td><td>47.3</td></tr>
-              <tr><td>GAIR</td><td>0.427</td><td>0.279</td><td>-0.096</td><td>-0.163</td><td>-0.342</td><td>59.9</td><td>56.5</td><td>50.8</td><td>48.4</td><td>47.2</td></tr>
-              <tr><td>TTE</td><td>0.563</td><td>0.418</td><td>0.119</td><td>-0.059</td><td>-0.214</td><td>66.1</td><td>62.2</td><td>56.5</td><td>53.7</td><td>52.3</td></tr>
-              <tr><td>TaxaBind</td><td>0.511</td><td>0.390</td><td>0.203</td><td>0.176</td><td>0.016</td><td>63.7</td><td>60.5</td><td>55.8</td><td>54.2</td><td>53.5</td></tr>
-              <tr><td>SLED</td><td>0.557</td><td>0.371</td><td>-0.061</td><td>-0.301</td><td>-0.554</td><td>65.9</td><td>61.7</td><td>52.5</td><td>48.1</td><td>44.5</td></tr>
-              <tr class="ours"><td>MIND<sub>64</sub></td><td>0.504</td><td>0.449</td><td>0.289</td><td>0.250</td><td>0.095</td><td>62.4</td><td>60.5</td><td>56.7</td><td>54.4</td><td>53.9</td></tr>
-              <tr class="ours"><td>MIND<sub>128</sub></td><td>0.533</td><td>0.460</td><td><i>0.291</i></td><td>0.247</td><td>0.121</td><td>63.9</td><td>61.3</td><td>57.6</td><td>55.6</td><td><i>54.5</i></td></tr>
-              <tr class="ours"><td>MIND<sub>256</sub></td><td>0.556</td><td><i>0.469</i></td><td>0.270</td><td>0.201</td><td>0.097</td><td>65.1</td><td>62.1</td><td>57.7</td><td><i>56.4</i></td><td>54.2</td></tr>
-              <tr class="ours"><td>MIND<sub>3k</sub></td><td>0.635</td><td>0.354</td><td>0.031</td><td>-0.050</td><td>-0.219</td><td><i>67.3</i></td><td><i>62.7</i></td><td><i>58.0</i></td><td>55.4</td><td>53.3</td></tr>
-              <tr class="ours best"><td>MIND+CP</td><td><i>0.643</i></td><td><b>0.500</b></td><td><b>0.335</b></td><td><b>0.288</b></td><td><b>0.182</b></td><td><b>67.8</b></td><td><b>63.9</b></td><td><b>59.8</b></td><td><b>57.6</b></td><td><b>55.7</b></td></tr>
+              <tr class="ref"><td>Coordinate IDW</td><td><b>0.675</b></td><td>0.435</td><td>0.187</td><td>0.093</td><td>-0.053</td><td>67.7</td><td>62.8</td><td>55.7</td><td>53.0</td><td>51.2</td></tr>
+              <tr><td>Cartesian 3D</td><td>0.137</td><td>0.089</td><td>-0.088</td><td>-0.173</td><td>-0.423</td><td>51.8</td><td>50.6</td><td>46.4</td><td>45.8</td><td>44.4</td></tr>
+              <tr><td>Wrap (Sin/Cos)</td><td>0.204</td><td>0.155</td><td>-0.025</td><td>-0.116</td><td>-0.344</td><td>53.1</td><td>52.2</td><td>48.3</td><td>46.8</td><td>45.2</td></tr>
+              <tr><td>SINR</td><td>0.522</td><td>0.394</td><td>0.089</td><td>-0.051</td><td>-0.211</td><td>63.8</td><td>61.4</td><td>55.2</td><td>51.4</td><td>49.5</td></tr>
+              <tr><td>SatCLIP</td><td>0.504</td><td>0.375</td><td>0.153</td><td>0.108</td><td>-0.082</td><td>63.8</td><td>60.8</td><td>55.0</td><td>52.4</td><td>51.9</td></tr>
+              <tr><td>Climplicit</td><td>0.590</td><td>0.435</td><td>0.190</td><td>0.120</td><td>-0.086</td><td>66.7</td><td>63.2</td><td>57.1</td><td>54.6</td><td>52.8</td></tr>
+              <tr><td>GeoCLIP</td><td>0.543</td><td>0.463</td><td>0.303</td><td>0.287</td><td><i>0.151</i></td><td>63.5</td><td>60.6</td><td>56.0</td><td>54.6</td><td>54.2</td></tr>
+              <tr><td>CSP-iNat</td><td>0.429</td><td>0.339</td><td>0.092</td><td>-0.055</td><td>-0.310</td><td>61.4</td><td>59.4</td><td>54.0</td><td>51.3</td><td>48.2</td></tr>
+              <tr><td>CSP-fMoW</td><td>0.407</td><td>0.335</td><td>0.101</td><td>-0.018</td><td>-0.276</td><td>61.7</td><td>60.0</td><td>54.8</td><td>51.9</td><td>47.7</td></tr>
+              <tr><td>GAIR</td><td>0.427</td><td>0.274</td><td>-0.055</td><td>-0.090</td><td>-0.322</td><td>60.3</td><td>57.1</td><td>51.7</td><td>49.6</td><td>48.5</td></tr>
+              <tr><td>TTE</td><td>0.563</td><td>0.420</td><td>0.235</td><td>0.154</td><td>-0.014</td><td>66.2</td><td>62.5</td><td>58.2</td><td>55.8</td><td>54.7</td></tr>
+              <tr><td>TaxaBind</td><td>0.512</td><td>0.402</td><td>0.240</td><td>0.210</td><td>0.053</td><td>63.9</td><td>61.0</td><td>55.9</td><td>54.4</td><td>53.7</td></tr>
+              <tr><td>SLED</td><td>0.557</td><td>0.375</td><td>0.057</td><td>-0.099</td><td>-0.394</td><td>66.0</td><td>62.0</td><td>53.9</td><td>49.9</td><td>46.0</td></tr>
+              <tr class="ours"><td>MIND<sub>64</sub></td><td>0.504</td><td>0.447</td><td>0.309</td><td>0.281</td><td>0.128</td><td>62.5</td><td>60.5</td><td>56.9</td><td>55.3</td><td>54.2</td></tr>
+              <tr class="ours"><td>MIND<sub>128</sub></td><td>0.533</td><td>0.465</td><td><i>0.327</i></td><td><i>0.303</i></td><td>0.136</td><td>64.0</td><td>62.0</td><td>57.7</td><td>56.3</td><td>54.8</td></tr>
+              <tr class="ours"><td>MIND<sub>256</sub></td><td>0.556</td><td>0.476</td><td>0.322</td><td>0.279</td><td>0.116</td><td>65.2</td><td>63.0</td><td>58.1</td><td><i>56.8</i></td><td><i>55.3</i></td></tr>
+              <tr class="ours"><td>MIND<sub>3k</sub></td><td>0.642</td><td><i>0.492</i></td><td>0.280</td><td>0.211</td><td>0.019</td><td><i>67.8</i></td><td><i>64.4</i></td><td><i>59.1</i></td><td>56.2</td><td>54.6</td></tr>
+              <tr class="ours best"><td>MIND+CP</td><td><i>0.643</i></td><td><b>0.508</b></td><td><b>0.356</b></td><td><b>0.315</b></td><td><b>0.184</b></td><td><b>67.8</b></td><td><b>64.6</b></td><td><b>59.9</b></td><td><b>57.8</b></td><td><b>56.3</b></td></tr>
             </tbody>
           </table>
         </div>
@@ -260,16 +271,16 @@
           Means across five fold-assignment seeds. Degrees indicate regional holdout block sizes.
           Bold and italics mark the best and second-best result across all methods, including the
           unlearned Coordinate IDW reference. MIND<sub>3k</sub> uses all 3072 dimensions.
-          Each column uses the same datasets for every method: 36 regression and 16 classification
-          datasets, reduced to 35 and 15 at the largest block sizes.
+          Each column uses the same datasets for every method: 36, 36, 36, 35, and 35 regression
+          datasets, and 16, 16, 15, 15, and 15 classification datasets, respectively.
         </p>
 
         <figure class="two-up">
-          <img src="assets/fig-width-curves.svg?v=8475d3d" width="346" height="162" decoding="async" loading="lazy" alt="R-squared against representation dimension under random folds and with 10-degree regions held out." />
-          <img src="assets/fig-halfsill.svg?v=8475d3d" width="350" height="122" decoding="async" loading="lazy" alt="Characteristic distance against representation dimension for MIND." />
+          <img src="assets/fig-width-curves.svg?v=377c226" width="346" height="162" decoding="async" loading="lazy" alt="R-squared against representation dimension under random folds and with 10-degree regions held out." />
+          <img src="assets/fig-halfsill.svg?v=377c226" width="350" height="122" decoding="async" loading="lazy" alt="Characteristic distance against representation dimension for MIND." />
           <figcaption>
             <b>Chunk performance and spatial granularity across truncations.</b> Adding chunks
-            raises random-fold R<sup>2</sup> from 0.504 to 0.635 but lowers the 10&deg; regional-holdout
+            raises random-fold R<sup>2</sup> from 0.504 to 0.642 but lowers the 10&deg; regional-holdout
             score beyond 128 dimensions. The characteristic distance decreases from about 790&nbsp;km
             for the first 64 dimensions to 200&nbsp;km for the full embedding. It is the separation
             at which the semivariogram reaches half its large-distance reference value.
@@ -453,7 +464,7 @@
     </svg>
 
     <script src="globe-renderer.js?v=20260921-3" defer></script>
-    <script src="globe.js?v=20260921-3" defer></script>
+    <script src="globe.js?v=20260922-1" defer></script>
     <script src="map.js?v=20260920-3" defer></script>
     <script src="map-color.js" defer></script>
     <script src="store.js?v=20260920-3" defer></script>

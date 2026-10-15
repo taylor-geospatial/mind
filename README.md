@@ -1,5 +1,6 @@
 # Matryoshka Implicit Neural Distillation (MIND)
 
+[![Paper](https://img.shields.io/badge/arXiv-2609.25454-B31B1B)](https://arxiv.org/abs/2609.25454)
 [![Hugging Face model](https://img.shields.io/badge/MIND-weights-FFD21E?logo=huggingface&logoColor=FFD21E)](https://huggingface.co/taylor-geospatial/MIND)
 [![Hugging Face CoordBench dataset](https://img.shields.io/badge/CoordBench-dataset-FFD21E?logo=huggingface&logoColor=FFD21E)](https://huggingface.co/datasets/taylor-geospatial/CoordBench)
 [![Hugging Face MINDSET dataset](https://img.shields.io/badge/MINDSET-dataset-FFD21E?logo=huggingface&logoColor=FFD21E)](https://huggingface.co/datasets/taylor-geospatial/MINDSET)
@@ -11,8 +12,12 @@ MIND maps latitude and longitude to a geospatial embedding.
 It distills AlphaEarth, Climplicit, GeoCLIP, and SINR into a 3072-dimensional ReSIREN, with prefixes at 64, 128, 256, 512, 1024, and 2048 dimensions.
 Inference requires no imagery or date.
 
+> [!NOTE]
+> CoordBench and its leaderboard are now part of [torchgeo-bench](https://github.com/torchgeo/torchgeo-bench), a new toolkit for evaluating geospatial foundation models (GeoFMs), and will be updated regularly.
+> To compare your model with MIND and the other implicit neural representations (INRs) evaluated in this paper, use [torchgeo-bench's CoordBench evaluation workflow](https://torchgeo.org/torchgeo-bench/user/coordbench.html).
+
 <p align="center">
-  <img src="docs/assets/fig-method.svg?v=20260920-white" width="900" alt="MIND architecture: nested teacher reconstruction during training and frozen embeddings for downstream prediction.">
+  <img src="docs/assets/fig-method.svg?v=377c226" width="900" alt="MIND architecture: nested teacher reconstruction during training and frozen embeddings for downstream prediction.">
 </p>
 
 Linear heads reconstruct teacher embeddings at each supervised width during training.
@@ -98,6 +103,7 @@ y_pred = probe.predict(X_test)
 
 Use full-width embeddings (`dim=None`) to include all seven MIND chunks.
 The function standardizes features using training statistics and penalizes chunk `j` by `alpha * beta**j`, starting at `j=0`.
+The intercept is fitted without regularization, matching the paper's corrected ridge probes.
 `beta=1` gives a uniform penalty across channels; larger values penalize later chunks more.
 Choose `alpha` and `beta` on validation data.
 

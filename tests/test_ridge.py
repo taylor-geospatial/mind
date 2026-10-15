@@ -18,7 +18,7 @@ class RidgeTests(unittest.TestCase):
         model = fit_ridge_cp(features, targets, alpha=2, beta=3, boundaries=(3, 6))
         mean, scale = features.mean(0), features.std(0, ddof=1).clip(min=1e-6)
         design = np.column_stack(((features - mean) / scale, np.ones(30)))
-        penalty = np.diag([1, 1, 1, 3, 3, 3, 9, 9, 9, 1])
+        penalty = np.diag([1, 1, 1, 3, 3, 3, 9, 9, 9, 0])
         weights = np.linalg.solve(design.T @ design + 2 * penalty, design.T @ targets)
         expected = np.column_stack(((test - mean) / scale, np.ones(5))) @ weights
         np.testing.assert_allclose(model.predict(test), expected, rtol=1e-9, atol=1e-9)

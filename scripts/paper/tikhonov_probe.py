@@ -1,7 +1,7 @@
 """Generalized Tikhonov probes for MIND embeddings.
 
 Solve ||Xw - y||^2 + alpha * w.T @ diag(g) @ w by rescaling features
-with g**(-1/2). The bias has g=1. Profiles use prefix truncation,
+with g**(-1/2). The intercept is unpenalized. Profiles use prefix truncation,
 chunk-geometric penalties, or power penalties.
 
 ``selected`` maximizes the outer-fold mean score over profiles and alphas.
@@ -70,26 +70,25 @@ def path_scores(
     x_tr, x_te = feats[train_idx], feats[test_idx]
     mean, std = x_tr.mean(0, keepdim=True), x_tr.std(0, keepdim=True).clamp_min(1e-6)
     x_tr, x_te = (x_tr - mean) / std, (x_te - mean) / std
-    x_tr = torch.cat([x_tr, torch.ones(x_tr.shape[0], 1, device=dev)], dim=1).double()
-    x_te = torch.cat([x_te, torch.ones(x_te.shape[0], 1, device=dev)], dim=1).double()
     y_tr = targets[train_idx].double()
-    gram = x_tr.T @ x_tr  # [D+1, D+1]
-    rhs = x_tr.T @ y_tr  # [D+1, K]
-    d = feats.shape[1]
+    x_tr, x_te = x_tr.double(), x_te.double()
+    x_mean, y_mean = x_tr.mean(0, keepdim=True), y_tr.mean(0, keepdim=True)
+    x_tr, x_te = x_tr - x_mean, x_te - x_mean
+    gram = x_tr.T @ x_tr
+    rhs = x_tr.T @ (y_tr - y_mean)
     out = np.empty((len(profiles), len(alphas), len(tinfo)), dtype=np.float64)
     for pi, (_, spec) in enumerate(profiles):
-        if isinstance(spec, int):  # truncation: sub-block of the shared Gram (+ bias column)
-            idx = torch.cat([torch.arange(spec, device=dev), torch.tensor([d], device=dev)])
+        if isinstance(spec, int):
+            idx = torch.arange(spec, device=dev)
             g_p, rhs_p, xte_p = gram[idx][:, idx], rhs[idx], x_te[:, idx]
-        else:  # graduated: diagonal rescale by s = g^{-1/2} (bias unscaled)
-            s = torch.ones(d + 1, dtype=torch.float64, device=dev)
-            s[:d] = torch.as_tensor(spec, device=dev) ** -0.5
+        else:
+            s = torch.as_tensor(spec, dtype=torch.float64, device=dev) ** -0.5
             g_p, rhs_p, xte_p = s[:, None] * gram * s[None, :], s[:, None] * rhs, x_te * s
         evals, evecs = torch.linalg.eigh(g_p)
         proj = evecs.T @ rhs_p
         xte_v = xte_p @ evecs
         for ai, a in enumerate(alphas):
-            pred = xte_v @ (proj / (evals[:, None] + a))
+            pred = xte_v @ (proj / (evals[:, None] + a)) + y_mean
             for ti, (_, task_type, sl, cidx) in enumerate(tinfo):
                 if task_type == "regression":
                     y_te = targets[test_idx, sl.start]
@@ -97,7 +96,7 @@ def path_scores(
                     ss_tot = ((y_te - y_te.mean()) ** 2).sum().clamp_min(1e-12)
                     out[pi, ai, ti] = float(1.0 - ss_res / ss_tot)
                 else:
-                    assert cidx is not None  # classification tinfo always carries class indices
+                    assert cidx is not None
                     out[pi, ai, ti] = float(
                         (pred[:, sl].argmax(1) == cidx[test_idx]).float().mean()
                     )

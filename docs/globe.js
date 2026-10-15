@@ -6,10 +6,18 @@
   var fallback = document.getElementById("globe-fallback");
   var play = document.getElementById("globe-play");
   var status = document.getElementById("globe-status");
+  var embedding = document.getElementById("globe-embedding");
+  var chunks = document.getElementById("globe-chunks");
+  var cells = Array.from({ length: 48 }, function () {
+    var cell = document.createElement("span");
+    cell.className = "globe-chunk";
+    chunks.appendChild(cell);
+    return cell;
+  });
   var reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
   var views = [0, 8, 24, 47].map(function (chunk) {
     return { file: "chunks/chunk_" + String(chunk).padStart(2, "0") + ".png",
-      label: "Chunk " + chunk };
+      label: "Chunk " + chunk, chunk: chunk };
   });
   views.push({ file: "global_pca_rgb.png", label: "All chunks", full: true });
   var images = new Map(), renderer = null;
@@ -38,12 +46,22 @@
     canvas.setAttribute("aria-label", "Globe showing " + description);
     fallback.src = "assets/" + view.file;
     fallback.alt = description;
+    embedding.hidden = false;
+    embedding.setAttribute("aria-label", "MIND embedding: 3,072 dimensions in 48 storage chunks of 64 dimensions, ordered coarse to fine. " +
+      (view.full ? "All chunks highlighted." : view.label + " highlighted, dimensions " + (view.chunk*64) + " through " + (view.chunk*64+63) + "."));
+    cells.forEach(function (cell, index) {
+      cell.classList.toggle("was-active", !!views[previous].full || views[previous].chunk === index);
+      cell.classList.toggle("is-active", !!view.full || view.chunk === index);
+    });
+    embedding.style.setProperty("--blend", renderer ? fade*fade*(3-2*fade) : 1);
     play.setAttribute("aria-label", playing ? "Pause animation" : "Play animation");
     play.title = play.getAttribute("aria-label");
   }
 
   function draw() {
-    if (renderer && ready) renderer.draw(views[previous], views[current], fade*fade*(3-2*fade), longitude, latitude);
+    var blend = renderer ? fade*fade*(3-2*fade) : 1;
+    embedding.style.setProperty("--blend", blend);
+    if (renderer && ready) renderer.draw(views[previous], views[current], blend, longitude, latitude);
   }
 
   async function select(index) {

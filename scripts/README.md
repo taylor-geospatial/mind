@@ -4,6 +4,8 @@ Run modules from the repository root after `make install`.
 Set `MIND_CHECKPOINT` to the released weights and `COORDBENCH_ROOT` to the downloaded CoordBench directory.
 Outputs default to `results/`.
 
+Ridge and Chunked Penalty probes use training-split centering and an unpenalized intercept, matching the updated paper results. Recompute evaluations into fresh output files when comparing with results produced before this correction; existing CSVs do not identify the intercept convention.
+
 ## Main comparison
 
 Run the three commands in the root README for fold seeds 0 through 4.

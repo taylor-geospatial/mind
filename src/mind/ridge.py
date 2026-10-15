@@ -36,7 +36,7 @@ def fit_ridge_cp(
 
     Features have shape [samples, dimensions]; targets may have one or several columns.
     Standardize with training means and sample standard deviations, floored at 1e-6.
-    Chunk j has penalty alpha * beta**j, starting at j=0. The bias has penalty alpha,
+    Chunk j has penalty alpha * beta**j, starting at j=0. The intercept is unpenalized,
     matching the paper's probes. beta=1 gives a uniform penalty across channels.
     Boundaries mark chunk starts after the first chunk; defaults match MIND.
     Select alpha and beta on validation data before fitting the final probe.
@@ -63,6 +63,6 @@ def fit_ridge_cp(
     scale = features.std(axis=0, ddof=1).clip(min=1e-6)
     chunk = np.searchsorted(stops, np.arange(features.shape[1]), side="right")
     rescale = float(beta) ** (-0.5 * chunk)
-    design = np.column_stack(((features - mean) / scale * rescale, np.ones(len(features))))
-    weights = Ridge(alpha=alpha, fit_intercept=False).fit(design, targets).coef_
-    return RidgeCP(mean, scale, weights[..., :-1] * rescale, weights[..., -1])
+    design = (features - mean) / scale * rescale
+    model = Ridge(alpha=alpha, fit_intercept=True).fit(design, targets)
+    return RidgeCP(mean, scale, model.coef_ * rescale, model.intercept_)

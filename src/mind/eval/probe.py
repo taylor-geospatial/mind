@@ -23,6 +23,18 @@ def _standardize_train_test(x_tr: Tensor, x_te: Tensor, thresh: float = 1e-4) ->
     return ((x_tr - mean) / sd) * keep, ((x_te - mean) / sd) * keep
 
 
+def _centered_ridge_predict(
+    x_tr: Tensor, y_tr: Tensor, x_te: Tensor, alpha: float, dev: torch.device
+) -> Tensor:
+    """Ridge with an unpenalized intercept: center on the training split, solve, restore the mean."""
+    x_tr, x_te, y_tr = x_tr.double(), x_te.double(), y_tr.double()
+    x_mean, y_mean = x_tr.mean(0, keepdim=True), y_tr.mean(0, keepdim=True)
+    xc = x_tr - x_mean
+    eye = torch.eye(xc.shape[1], device=dev, dtype=torch.float64)
+    weight = torch.linalg.solve(xc.T @ xc + alpha * eye, xc.T @ (y_tr - y_mean))
+    return (x_te - x_mean) @ weight + y_mean
+
+
 def _ridge_eval(
     feats: Tensor,
     targets: Tensor,
@@ -34,16 +46,14 @@ def _ridge_eval(
     dev: torch.device,
     standardize: bool = True,
 ) -> float:
-    """Fit ridge on ``train_idx`` and score ``test_idx`` with R^2 or accuracy."""
+    """Fit ridge on ``train_idx`` and score ``test_idx`` with R^2 or accuracy.
+
+    The intercept is unpenalized; centering uses only the training split.
+    """
     x_tr, x_te = feats[train_idx], feats[test_idx]
     if standardize:
         x_tr, x_te = _standardize_train_test(x_tr, x_te)
-    # Use float64 so small penalties remain resolvable on the Gram diagonal.
-    x_tr = torch.cat([x_tr, torch.ones(x_tr.shape[0], 1, device=dev)], dim=1).double()
-    x_te = torch.cat([x_te, torch.ones(x_te.shape[0], 1, device=dev)], dim=1).double()
-    eye = torch.eye(x_tr.shape[1], device=dev, dtype=torch.float64)
-    weight = torch.linalg.solve(x_tr.T @ x_tr + alpha * eye, x_tr.T @ targets[train_idx].double())
-    pred = x_te @ weight
+    pred = _centered_ridge_predict(x_tr, targets[train_idx], x_te, alpha, dev)
     if task_type == "regression":
         y_te = targets[test_idx]
         ss_res = ((y_te - pred) ** 2).sum()
@@ -68,19 +78,18 @@ def _ridge_eval_alpha_path(
     x_tr, x_te = feats[train_idx], feats[test_idx]
     if standardize:
         x_tr, x_te = _standardize_train_test(x_tr, x_te)
-    # Use float64 to retain small penalties on the Gram diagonal.
-    x_tr = torch.cat([x_tr, torch.ones(x_tr.shape[0], 1, device=dev)], dim=1).double()
-    x_te = torch.cat([x_te, torch.ones(x_te.shape[0], 1, device=dev)], dim=1).double()
     y_tr = targets[train_idx].double()
+    x_tr, x_te = x_tr.double(), x_te.double()
+    x_mean, y_mean = x_tr.mean(0, keepdim=True), y_tr.mean(0, keepdim=True)
+    x_tr, x_te = x_tr - x_mean, x_te - x_mean
     gram = x_tr.T @ x_tr
-    rhs = x_tr.T @ y_tr
-    # The eigenbasis is shared by all regularized systems.
+    rhs = x_tr.T @ (y_tr - y_mean)
     evals, evecs = torch.linalg.eigh(gram)
-    proj = evecs.T @ rhs  # [D+1, n_targets]
-    x_te_v = x_te @ evecs  # [n_test, D+1]
+    proj = evecs.T @ rhs
+    x_te_v = x_te @ evecs
     out = []
     for a in alphas:
-        pred = x_te_v @ (proj / (evals[:, None] + a))
+        pred = x_te_v @ (proj / (evals[:, None] + a)) + y_mean
         if task_type == "regression":
             y_te = targets[test_idx]
             ss_res = ((y_te - pred) ** 2).sum()
@@ -300,7 +309,7 @@ def ridge_fold_predictions(
     Rows with nonfinite labels or features are dropped. Each penalty is selected
     by random-fold CV within the corresponding training pool.
     """
-    dev = torch.device(device if (device == "cpu" or torch.cuda.is_available()) else "cpu")
+    dev = torch.device(device if device == "cpu" or torch.cuda.is_available() else "cpu")
     if task_type == "regression":
         valid = np.isfinite(labels)
     else:
@@ -319,7 +328,6 @@ def ridge_fold_predictions(
         class_idx = torch.as_tensor(inverse, device=dev)
         targets = torch.nn.functional.one_hot(class_idx).float()
         truth = inverse.astype(np.int64)
-
     all_idx = torch.arange(feats.shape[0], device=dev)
     if fold_assign is None:
         g = torch.Generator().manual_seed(seed)
@@ -329,7 +337,6 @@ def ridge_fold_predictions(
         fa = torch.as_tensor(np.asarray(fold_assign)[valid], device=dev)
         fold_ids = [all_idx[fa == f] for f in torch.unique(fa)]
     fold_ids = [f for f in fold_ids if f.numel() > 0]
-
     pred = np.full(len(rows), np.nan)
     fold_of = np.full(len(rows), -1, dtype=np.int64)
     for f, te in enumerate(fold_ids):
@@ -350,11 +357,7 @@ def ridge_fold_predictions(
         x_tr, x_te = feats[tr], feats[te]
         if standardize:
             x_tr, x_te = _standardize_train_test(x_tr, x_te)
-        x_tr = torch.cat([x_tr, torch.ones(x_tr.shape[0], 1, device=dev)], dim=1).double()
-        x_te = torch.cat([x_te, torch.ones(x_te.shape[0], 1, device=dev)], dim=1).double()
-        eye = torch.eye(x_tr.shape[1], device=dev, dtype=torch.float64)
-        weight = torch.linalg.solve(x_tr.T @ x_tr + best_alpha * eye, x_tr.T @ targets[tr].double())
-        out = x_te @ weight
+        out = _centered_ridge_predict(x_tr, targets[tr], x_te, best_alpha, dev)
         te_np = te.cpu().numpy()
         pred[te_np] = (
             out.squeeze(1).cpu().numpy()

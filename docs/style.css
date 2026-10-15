@@ -53,24 +53,20 @@ code { font-family: var(--mono); font-size: 0.86em; }
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
-  gap: 24px;
-  padding: 0 24px;
+  gap: 28px;
+  padding: 0 28px;
   margin-bottom: 14px;
 }
 .research-home {
   display: inline-flex;
   align-items: center;
   justify-self: start;
-  gap: 16px;
   min-height: 44px;
+  max-width: 100%;
   color: var(--ink);
-  font-family: var(--mono);
-  font-size: 0.74rem;
-  white-space: nowrap;
 }
 .research-home:hover { color: var(--ink); text-decoration: none; }
-.research-home:hover span { text-decoration: underline; text-underline-offset: 3px; }
-.research-home .mark { width: 32px; height: 32px; display: block; flex: none; }
+.research-logo { display: block; width: 240px; max-width: 100%; height: auto; }
 h1 {
   font-size: 2.2rem;
   line-height: 1.12;
@@ -114,11 +110,11 @@ h1 .it { font-style: italic; font-weight: 500; }
   margin-top: 0.5em;
 }
 .links a {
-  color: var(--ink);
+  color: var(--accent);
   border-bottom: 1px solid var(--rule);
   padding: 10px 0;
 }
-.links a:hover { color: var(--accent); border-color: var(--accent); text-decoration: none; }
+.links a:hover { color: var(--ink); border-color: var(--accent); text-decoration: none; }
 
 /* ---------- sections ---------- */
 section { padding: 34px 0; scroll-margin-top: 16px; border-bottom: 1px solid var(--rule); }
@@ -427,7 +423,7 @@ footer { padding: 26px 0 36px; color: var(--muted); font-size: 0.9rem; }
   h1 { font-size: 1.9rem; }
   h2 { font-size: 1.35rem; line-height: 1.25; }
   .hero { padding: 20px 0 12px; }
-  .hero-heading { padding-inline: 20px; }
+  .hero-heading { padding-inline: 28px; }
   .subtitle { font-size: 1.05rem; line-height: 1.4; }
   .links { gap: 0 16px; }
   .section-nav { gap: 0 20px; margin-top: 6px; }

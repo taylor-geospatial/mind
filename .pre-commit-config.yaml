@@ -16,6 +16,7 @@ repos:
       - id: debug-statements
       - id: check-added-large-files
         args: ['--maxkb=1000']
+        exclude: ^docs/assets/mind-linkedin-2160x2700\.mp4$
       - id: check-merge-conflict
       - id: trailing-whitespace
       - id: requirements-txt-fixer
