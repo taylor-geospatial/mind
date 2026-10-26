@@ -14,7 +14,7 @@ Inference requires no imagery or date.
 
 > [!NOTE]
 > CoordBench and its leaderboard are now part of [geo-eval-harness](https://github.com/torchgeo/geo-eval-harness), a new toolkit for evaluating geospatial foundation models (GeoFMs), and will be updated regularly.
-> To compare your model with MIND and the other implicit neural representations (INRs) evaluated in this paper, use [torchgeo-bench's CoordBench evaluation workflow](https://torchgeo.org/torchgeo-bench/user/coordbench.html).
+> To compare your model with MIND and the other implicit neural representations (INRs) evaluated in this paper, use [geo-eval-harness's CoordBench evaluation workflow](https://torchgeo.org/geo-eval-harness/user/coordbench.html).
 
 <p align="center">
   <img src="docs/assets/fig-method.svg?v=377c226" width="900" alt="MIND architecture: nested teacher reconstruction during training and frozen embeddings for downstream prediction.">
