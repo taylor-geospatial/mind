@@ -13,7 +13,7 @@ It distills AlphaEarth, Climplicit, GeoCLIP, and SINR into a 3072-dimensional Re
 Inference requires no imagery or date.
 
 > [!NOTE]
-> CoordBench and its leaderboard are now part of [torchgeo-bench](https://github.com/torchgeo/torchgeo-bench), a new toolkit for evaluating geospatial foundation models (GeoFMs), and will be updated regularly.
+> CoordBench and its leaderboard are now part of [geo-eval-harness](https://github.com/torchgeo/geo-eval-harness), a new toolkit for evaluating geospatial foundation models (GeoFMs), and will be updated regularly.
 > To compare your model with MIND and the other implicit neural representations (INRs) evaluated in this paper, use [torchgeo-bench's CoordBench evaluation workflow](https://torchgeo.org/torchgeo-bench/user/coordbench.html).
 
 <p align="center">
